@@ -1,8 +1,9 @@
 package org.molodyko.utils;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringUtilTest {
     @Test
@@ -10,7 +11,7 @@ public class StringUtilTest {
         String text = "dmdev";
         String rightAnswer = "Dmdev";
         String afterChange = StringUtil.capitalize(text);
-        Assertions.assertEquals(afterChange, rightAnswer);
+        assertEquals(afterChange, rightAnswer);
     }
 
     @Test
@@ -18,7 +19,7 @@ public class StringUtilTest {
         String text = "";
         String rightAnswer = "";
         String afterChange = StringUtil.capitalize(text);
-        Assertions.assertEquals(afterChange, rightAnswer);
+        assertEquals(afterChange, rightAnswer);
     }
 
 }

@@ -3,6 +3,7 @@ package org.molodyko.utils;
 import java.util.Locale;
 
 public class StringUtil {
+
     public static String capitalize(String text) {
         if (isNullOrEmpty(text)) {
             System.out.println("Text is null or empty");
