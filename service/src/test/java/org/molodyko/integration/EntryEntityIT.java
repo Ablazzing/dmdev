@@ -1,17 +1,16 @@
 package org.molodyko.integration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.Entry;
 import org.molodyko.entity.User;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 public class EntryEntityIT extends IntegrationBase {
 
     @Test
@@ -19,17 +18,18 @@ public class EntryEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, 1);
-            Category category = session.get(Category.class, 1);
+            User user = session.get(User.class, EXISTED_USER_ID);
+            Category category = session.get(Category.class, EXISTED_CATEGORY_ID);
             Entry entry = Entry.builder()
-                    .amount(1000d)
+                    .amount(BigDecimal.valueOf(1000d))
                     .date(LocalDateTime.MAX)
                     .operationNumber(1)
                     .category(category)
-                    .description("some_text2")
-                    .user(user)
-                    .build();
+                    .description("some_text2").user(user).build();
             session.save(entry);
+
+            Entry createdEntry = session.get(Entry.class, 4);
+            assertThat(createdEntry).isNotNull();
 
             session.getTransaction().commit();
         }
@@ -38,15 +38,14 @@ public class EntryEntityIT extends IntegrationBase {
     @Test
     public void readEntry() {
         try (Session session = sessionFactory.openSession()) {
-            Entry entry = session.get(Entry.class, 1);
+            Entry entry = session.get(Entry.class, EXISTED_ENTRY_ID);
 
-            assertThat(entry.getAmount()).isEqualTo(1000);
+            assertThat(entry.getAmount().compareTo(BigDecimal.valueOf(1000d))).isEqualTo(0);
             assertThat(entry.getDescription()).isEqualTo("some_text");
             assertThat(entry.getUser().getUsername()).isEqualTo("abl");
             assertThat(entry.getCategory().getName()).isEqualTo("vacation");
             assertThat(entry.getOperationNumber()).isEqualTo(1);
-            assertThat(entry.getDate()).isEqualTo(
-                    LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+            assertThat(entry.getDate()).isEqualTo(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
         }
     }
 
@@ -54,20 +53,22 @@ public class EntryEntityIT extends IntegrationBase {
     public void updateEntry() {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            User user = session.get(User.class, 1);
-            Category category = session.get(Category.class, 1);
+            User user = session.get(User.class, EXISTED_USER_ID);
+            Category category = session.get(Category.class, EXISTED_CATEGORY_ID);
 
-            Entry entry = Entry.builder()
-                    .id(1)
-                    .user(user)
-                    .category(category)
+            Entry entry = Entry.builder().id(EXISTED_ENTRY_ID)
+                    .user(user).category(category)
                     .description("some_text3")
-                    .operationNumber(1)
-                    .amount(1000d)
+                    .operationNumber(4)
+                    .amount(BigDecimal.valueOf(1000d))
                     .date(LocalDateTime.MIN)
                     .build();
             session.update(entry);
             session.flush();
+
+            Entry updatedEntry = session.get(Entry.class, EXISTED_USER_ID);
+            assertThat(updatedEntry.getOperationNumber()).isEqualTo(4);
+            assertThat(updatedEntry.getDescription()).isEqualTo("some_text3");
 
             session.getTransaction().commit();
         }
@@ -78,9 +79,12 @@ public class EntryEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Entry entry = Entry.builder().id(1).build();
+            Entry entry = Entry.builder().id(EXISTED_ENTRY_ID).build();
             session.delete(entry);
             session.flush();
+
+            Entry deletedEntry = session.get(Entry.class, EXISTED_ENTRY_ID);
+            assertThat(deletedEntry).isNull();
 
             session.getTransaction().commit();
         }

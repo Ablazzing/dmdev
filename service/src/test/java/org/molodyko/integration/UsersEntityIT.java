@@ -1,6 +1,5 @@
 package org.molodyko.integration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.User;
@@ -8,8 +7,8 @@ import org.molodyko.entity.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 public class UsersEntityIT extends IntegrationBase {
+
 
     @Test
     public void createUser() {
@@ -24,6 +23,9 @@ public class UsersEntityIT extends IntegrationBase {
                     .build();
             session.save(user);
 
+            User createdUser = session.get(User.class, CREATED_USER_ID);
+            assertThat(createdUser).isNotNull();
+
             session.getTransaction().commit();
         }
     }
@@ -31,7 +33,7 @@ public class UsersEntityIT extends IntegrationBase {
     @Test
     public void readUser() {
         try (Session session = sessionFactory.openSession()) {
-            User user = session.get(User.class, 1);
+            User user = session.get(User.class, EXISTED_USER_ID);
 
             assertThat(user.getEmail()).isEqualTo("test@ya.ru");
             assertThat(user.getPassword()).isEqualTo("pass");
@@ -46,7 +48,7 @@ public class UsersEntityIT extends IntegrationBase {
             session.beginTransaction();
 
             User user = User.builder()
-                    .id(1)
+                    .id(EXISTED_USER_ID)
                     .username("abl")
                     .password("pass")
                     .email("test@ya.ru")
@@ -54,6 +56,9 @@ public class UsersEntityIT extends IntegrationBase {
                     .build();
             session.update(user);
             session.flush();
+
+            User updatedUser = session.get(User.class, EXISTED_USER_ID);
+            assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
 
             session.getTransaction().commit();
         }
@@ -64,9 +69,12 @@ public class UsersEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = User.builder().id(1).build();
+            User user = User.builder().id(FOR_DELETE_USER_ID).build();
             session.delete(user);
             session.flush();
+
+            User deletedUser = session.get(User.class, FOR_DELETE_USER_ID);
+            assertThat(deletedUser).isNull();
 
             session.getTransaction().commit();
         }

@@ -1,6 +1,5 @@
 package org.molodyko.integration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
@@ -9,7 +8,6 @@ import org.molodyko.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 public class HolidayTypeEntityIT extends IntegrationBase {
 
     @Test
@@ -17,10 +15,17 @@ public class HolidayTypeEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, 1);
-            Category category = session.get(Category.class, 1);
-            HolidayType holidayType = HolidayType.builder().name("отпуск в горы").category(category).user(user).build();
+            User user = session.get(User.class, EXISTED_USER_ID);
+            Category category = session.get(Category.class, EXISTED_CATEGORY_ID);
+            HolidayType holidayType = HolidayType.builder()
+                    .name("отпуск в горы")
+                    .category(category)
+                    .user(user)
+                    .build();
             session.save(holidayType);
+
+            HolidayType createdHolidayType = session.get(HolidayType.class, 3);
+            assertThat(createdHolidayType).isNotNull();
 
             session.getTransaction().commit();
         }
@@ -29,7 +34,7 @@ public class HolidayTypeEntityIT extends IntegrationBase {
     @Test
     public void readHolidayType() {
         try (Session session = sessionFactory.openSession()) {
-            HolidayType holidayType = session.get(HolidayType.class, 1);
+            HolidayType holidayType = session.get(HolidayType.class, EXISTED_HOLIDAY_TYPE_ID);
 
             assertThat(holidayType.getName()).isEqualTo("отпуск на море");
             assertThat(holidayType.getUser().getUsername()).isEqualTo("abl");
@@ -42,9 +47,14 @@ public class HolidayTypeEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, 1);
-            Category category = session.get(Category.class, 1);
-            HolidayType holidayType = HolidayType.builder().user(user).category(category).id(1).name("отпуск в горы").build();
+            User user = session.get(User.class, EXISTED_USER_ID);
+            Category category = session.get(Category.class, EXISTED_CATEGORY_ID);
+            HolidayType holidayType = HolidayType.builder()
+                    .user(user)
+                    .category(category)
+                    .id(EXISTED_HOLIDAY_TYPE_ID)
+                    .name("отпуск в горы")
+                    .build();
             session.update(holidayType);
             session.flush();
 
@@ -57,7 +67,7 @@ public class HolidayTypeEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            HolidayType holidayType = HolidayType.builder().id(1).build();
+            HolidayType holidayType = HolidayType.builder().id(FOR_DELETE_HOLIDAY_TYPE_ID).build();
             session.delete(holidayType);
             session.flush();
 
