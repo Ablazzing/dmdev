@@ -6,6 +6,10 @@ import org.molodyko.entity.Category;
 import org.molodyko.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_ID;
+import static org.molodyko.integration.DababaseEntityId.EXISTED_CATEGORY_ID;
+import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
+import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_CATEGORY_ID;
 
 public class CategoryEntityIT extends IntegrationBase {
 
@@ -14,11 +18,11 @@ public class CategoryEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, EXISTED_USER_ID);
+            User user = session.get(User.class, EXISTED_USER_ID.id());
             Category food = Category.builder().name("food").user(user).build();
             session.save(food);
 
-            Category createdCategory = session.get(Category.class, 4);
+            Category createdCategory = session.get(Category.class, CREATED_CATEGORY_ID.id());
             assertThat(createdCategory).isNotNull();
 
             session.getTransaction().commit();
@@ -28,7 +32,7 @@ public class CategoryEntityIT extends IntegrationBase {
     @Test
     public void readCategory() {
         try (Session session = sessionFactory.openSession()) {
-            Category category = session.get(Category.class, EXISTED_CATEGORY_ID);
+            Category category = session.get(Category.class, EXISTED_CATEGORY_ID.id());
 
             assertThat(category.getName()).isEqualTo("vacation");
             assertThat(category.getUser().getUsername()).isEqualTo("abl");
@@ -40,12 +44,12 @@ public class CategoryEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, EXISTED_USER_ID);
-            Category category = Category.builder().id(EXISTED_CATEGORY_ID).name("animal").user(user).build();
+            User user = session.get(User.class, EXISTED_USER_ID.id());
+            Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
             session.update(category);
             session.flush();
 
-            Category updatedCategory = session.get(Category.class, EXISTED_CATEGORY_ID);
+            Category updatedCategory = session.get(Category.class, EXISTED_CATEGORY_ID.id());
             assertThat(updatedCategory.getName()).isEqualTo("animal");
 
             session.getTransaction().commit();
@@ -57,11 +61,11 @@ public class CategoryEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Category category = Category.builder().id(FOR_DELETE_CATEGORY_ID).build();
+            Category category = Category.builder().id(FOR_DELETE_CATEGORY_ID.id()).build();
             session.delete(category);
             session.flush();
 
-            Category deletedCategory = session.get(Category.class, FOR_DELETE_CATEGORY_ID);
+            Category deletedCategory = session.get(Category.class, FOR_DELETE_CATEGORY_ID.id());
             assertThat(deletedCategory).isNull();
 
             session.getTransaction().commit();

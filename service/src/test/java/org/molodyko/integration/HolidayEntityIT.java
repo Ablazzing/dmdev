@@ -9,6 +9,10 @@ import org.molodyko.entity.User;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.molodyko.integration.DababaseEntityId.CREATED_HOLIDAY_ID;
+import static org.molodyko.integration.DababaseEntityId.EXISTED_HOLIDAY_ID;
+import static org.molodyko.integration.DababaseEntityId.EXISTED_HOLIDAY_TYPE_ID;
+import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 
 public class HolidayEntityIT extends IntegrationBase {
 
@@ -17,8 +21,8 @@ public class HolidayEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, EXISTED_USER_ID);
-            HolidayType holidayType = session.get(HolidayType.class, EXISTED_HOLIDAY_TYPE_ID);
+            User user = session.get(User.class, EXISTED_USER_ID.id());
+            HolidayType holidayType = session.get(HolidayType.class, EXISTED_HOLIDAY_TYPE_ID.id());
             Holiday holiday = Holiday.builder()
                     .startDate(LocalDate.MIN)
                     .endDate(LocalDate.MAX)
@@ -27,7 +31,7 @@ public class HolidayEntityIT extends IntegrationBase {
                     .build();
             session.save(holiday);
 
-            Holiday createdHoliday = session.get(Holiday.class, 2);
+            Holiday createdHoliday = session.get(Holiday.class, CREATED_HOLIDAY_ID.id());
             assertThat(createdHoliday).isNotNull();
 
             session.getTransaction().commit();
@@ -37,7 +41,7 @@ public class HolidayEntityIT extends IntegrationBase {
     @Test
     public void readHoliday() {
         try (Session session = sessionFactory.openSession()) {
-            Holiday holiday = session.get(Holiday.class, EXISTED_HOLIDAY_ID);
+            Holiday holiday = session.get(Holiday.class, EXISTED_HOLIDAY_ID.id());
 
             LocalDate expectedStartDate = LocalDate.of(2020, 1, 1);
             LocalDate expectedEndDate = LocalDate.of(2021, 1, 1);
@@ -54,9 +58,9 @@ public class HolidayEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = session.get(User.class, EXISTED_USER_ID);
-            HolidayType holidayType = session.get(HolidayType.class, EXISTED_HOLIDAY_TYPE_ID);
-            Holiday holiday = Holiday.builder().id(EXISTED_HOLIDAY_ID)
+            User user = session.get(User.class, EXISTED_USER_ID.id());
+            HolidayType holidayType = session.get(HolidayType.class, EXISTED_HOLIDAY_TYPE_ID.id());
+            Holiday holiday = Holiday.builder().id(EXISTED_HOLIDAY_ID.id())
                     .user(user)
                     .holidayType(holidayType)
                     .startDate(LocalDate.MIN)
@@ -65,7 +69,7 @@ public class HolidayEntityIT extends IntegrationBase {
             session.update(holiday);
             session.flush();
 
-            Holiday updatedHoliday = session.get(Holiday.class, EXISTED_HOLIDAY_ID);
+            Holiday updatedHoliday = session.get(Holiday.class, EXISTED_HOLIDAY_ID.id());
             assertThat(updatedHoliday.getStartDate()).isEqualTo(LocalDate.MIN);
 
             session.getTransaction().commit();
@@ -77,11 +81,11 @@ public class HolidayEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Holiday holiday = Holiday.builder().id(EXISTED_HOLIDAY_ID).build();
+            Holiday holiday = Holiday.builder().id(EXISTED_HOLIDAY_ID.id()).build();
             session.delete(holiday);
             session.flush();
 
-            Holiday deletedHoliday = session.get(Holiday.class, EXISTED_HOLIDAY_ID);
+            Holiday deletedHoliday = session.get(Holiday.class, EXISTED_HOLIDAY_ID.id());
             assertThat(deletedHoliday).isNull();
 
             session.getTransaction().commit();

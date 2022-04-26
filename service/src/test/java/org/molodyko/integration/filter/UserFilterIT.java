@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.molodyko.entity.User;
 import org.molodyko.entity.UserRole;
 import org.molodyko.entity.User_;
-import org.molodyko.entity.filter.CriteriaPredicate;
+import org.molodyko.entity.utils.CriteriaPredicate;
 import org.molodyko.entity.filter.UserFilter;
 import org.molodyko.integration.IntegrationBase;
 
@@ -27,10 +27,9 @@ public class UserFilterIT extends IntegrationBase {
             CriteriaQuery<User> criteria = cb.createQuery(User.class);
             Root<User> user = criteria.from(User.class);
 
-            Predicate predicate = CriteriaPredicate.builder(cb)
-                    .addEquals(user.get(User_.username), filter.getUsername())
-                    .addEquals(user.get(User_.role), filter.getRole())
-                    .andAll();
+            Predicate[] predicate = CriteriaPredicate.builder(cb)
+                            .add(filter.getUsername(), username -> cb.equal(user.get(User_.username), username))
+                            .getPredicates();
 
             criteria.select(user).where(predicate);
             List<User> list = session.createQuery(criteria).list();

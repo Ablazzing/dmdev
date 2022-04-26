@@ -1,4 +1,4 @@
-package org.molodyko.entity.filter;
+package org.molodyko.entity.utils;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;

@@ -6,6 +6,9 @@ import org.molodyko.entity.User;
 import org.molodyko.entity.UserRole;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.molodyko.integration.DababaseEntityId.CREATED_USER_ID;
+import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
+import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_USER_ID;
 
 public class UsersEntityIT extends IntegrationBase {
 
@@ -23,7 +26,7 @@ public class UsersEntityIT extends IntegrationBase {
                     .build();
             session.save(user);
 
-            User createdUser = session.get(User.class, CREATED_USER_ID);
+            User createdUser = session.get(User.class, CREATED_USER_ID.id());
             assertThat(createdUser).isNotNull();
 
             session.getTransaction().commit();
@@ -33,7 +36,7 @@ public class UsersEntityIT extends IntegrationBase {
     @Test
     public void readUser() {
         try (Session session = sessionFactory.openSession()) {
-            User user = session.get(User.class, EXISTED_USER_ID);
+            User user = session.get(User.class, EXISTED_USER_ID.id());
 
             assertThat(user.getEmail()).isEqualTo("test@ya.ru");
             assertThat(user.getPassword()).isEqualTo("pass");
@@ -48,7 +51,7 @@ public class UsersEntityIT extends IntegrationBase {
             session.beginTransaction();
 
             User user = User.builder()
-                    .id(EXISTED_USER_ID)
+                    .id(EXISTED_USER_ID.id())
                     .username("abl")
                     .password("pass")
                     .email("test@ya.ru")
@@ -57,7 +60,7 @@ public class UsersEntityIT extends IntegrationBase {
             session.update(user);
             session.flush();
 
-            User updatedUser = session.get(User.class, EXISTED_USER_ID);
+            User updatedUser = session.get(User.class, EXISTED_USER_ID.id());
             assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
 
             session.getTransaction().commit();
@@ -69,11 +72,11 @@ public class UsersEntityIT extends IntegrationBase {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            User user = User.builder().id(FOR_DELETE_USER_ID).build();
+            User user = User.builder().id(FOR_DELETE_USER_ID.id()).build();
             session.delete(user);
             session.flush();
 
-            User deletedUser = session.get(User.class, FOR_DELETE_USER_ID);
+            User deletedUser = session.get(User.class, FOR_DELETE_USER_ID.id());
             assertThat(deletedUser).isNull();
 
             session.getTransaction().commit();

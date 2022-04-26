@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Entry;
 import org.molodyko.entity.filter.EntryFilter;
-import org.molodyko.entity.filter.QPredicate;
+import org.molodyko.entity.utils.QPredicate;
 import org.molodyko.integration.IntegrationBase;
 
 import java.math.BigDecimal;
