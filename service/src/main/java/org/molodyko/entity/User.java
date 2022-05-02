@@ -24,7 +24,7 @@ import java.util.List;
 @Builder
 @ToString(exclude = {"categories"})
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -38,6 +38,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Category> categories;
 }

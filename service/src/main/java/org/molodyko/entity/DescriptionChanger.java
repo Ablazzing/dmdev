@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Builder
 @ToString(exclude = {"category", "user"})
 @Table(name = "description_changer")
-public class DescriptionChanger {
+public class DescriptionChanger extends BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

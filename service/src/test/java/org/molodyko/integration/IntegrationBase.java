@@ -26,7 +26,7 @@ public abstract class IntegrationBase {
     @BeforeEach
     protected void fillDatabaseTestData() {
         try (
-             Session session = sessionFactory.openSession()) {
+                Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
             session.createSQLQuery(sqlCreateTables).executeUpdate();
@@ -36,7 +36,8 @@ public abstract class IntegrationBase {
         }
     }
 
-    @AfterEach protected void clearDatabase() {
+    @AfterEach
+    protected void clearDatabase() {
         try (
                 Session session = sessionFactory.openSession()) {
             session.beginTransaction();

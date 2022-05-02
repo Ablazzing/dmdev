@@ -25,7 +25,7 @@ public enum DababaseEntityId {
 
     EXISTED_CATEGORY_RENAME_ID(1),
     CREATED_CATEGORY_RENAME_ID(2);
-    
+
     private int id;
 
     DababaseEntityId(int id) {

@@ -10,7 +10,8 @@ import java.util.function.Function;
 public class CriteriaPredicate {
     List<Predicate> predicates = new ArrayList<>();
 
-    private CriteriaPredicate() {}
+    private CriteriaPredicate() {
+    }
 
     public static CriteriaPredicate builder(CriteriaBuilder cb) {
         return new CriteriaPredicate();
@@ -24,6 +25,6 @@ public class CriteriaPredicate {
     }
 
     public Predicate[] getPredicates() {
-        return  predicates.toArray(Predicate[]::new);
+        return predicates.toArray(Predicate[]::new);
     }
 }

@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Builder
 @ToString(exclude = {"categoryBefore", "categoryAfter", "user"})
 @Table(name = "category_rename")
-public class CategoryRename {
+public class CategoryRename extends BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

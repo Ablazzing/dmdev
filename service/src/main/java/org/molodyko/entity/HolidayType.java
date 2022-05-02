@@ -26,7 +26,7 @@ import java.util.List;
 @Builder
 @ToString(exclude = {"category", "user"})
 @Table(name = "holiday_type")
-public class HolidayType {
+public class HolidayType extends BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -41,7 +41,7 @@ public class HolidayType {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "holidayType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "holidayType", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Holiday> holidays;
 }

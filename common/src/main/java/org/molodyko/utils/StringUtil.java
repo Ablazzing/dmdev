@@ -9,7 +9,7 @@ public class StringUtil {
             System.out.println("Text is null or empty");
             return text;
         }
-        String firstSymbol = text.substring(0,1);
+        String firstSymbol = text.substring(0, 1);
         return text.replaceFirst(firstSymbol, firstSymbol.toUpperCase(Locale.ROOT));
     }
 

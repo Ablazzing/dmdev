@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public.category
 (
     id      SERIAL PRIMARY KEY,
     name    VARCHAR(50) NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER     NOT NULL,
     foreign key (user_id) references public.users (id)
 );
 
@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS public.holiday_type
 CREATE TABLE IF NOT EXISTS public.holiday
 (
     id              SERIAL PRIMARY KEY,
-    start_date      DATE NOT NULL,
-    end_date        DATE NOT NULL,
+    start_date      DATE    NOT NULL,
+    end_date        DATE    NOT NULL,
     user_id         INTEGER NOT NULL,
     holiday_type_id INTEGER NOT NULL,
     foreign key (user_id) references public.users (id),
@@ -40,12 +40,12 @@ CREATE TABLE IF NOT EXISTS public.holiday
 CREATE TABLE IF NOT EXISTS public.entry
 (
     id               SERIAL PRIMARY KEY,
-    amount           DECIMAL NOT NULL,
+    amount           DECIMAL      NOT NULL,
     description      VARCHAR(100) NOT NULL,
-    date             TIMESTAMP NOT NULL,
-    operation_number INTEGER NOT NULL,
-    category_id      INTEGER NOT NULL,
-    user_id          INTEGER NOT NULL,
+    date             TIMESTAMP    NOT NULL,
+    operation_number INTEGER      NOT NULL,
+    category_id      INTEGER      NOT NULL,
+    user_id          INTEGER      NOT NULL,
     foreign key (user_id) references public.users (id),
     foreign key (category_id) references public.category (id)
 );
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS public.description_changer
 (
     id                  SERIAL PRIMARY KEY,
     description_pattern VARCHAR(100) NOT NULL,
-    category_id         INTEGER NOT NULL,
-    user_id             INTEGER NOT NULL,
+    category_id         INTEGER      NOT NULL,
+    user_id             INTEGER      NOT NULL,
     foreign key (user_id) references public.users (id),
     foreign key (category_id) references public.category (id)
 );

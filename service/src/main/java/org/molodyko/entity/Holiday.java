@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @Builder
 @ToString(exclude = {"holidayType", "user"})
 @Table(name = "holiday")
-public class Holiday {
+public class Holiday extends BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
