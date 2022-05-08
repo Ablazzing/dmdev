@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.molodyko.HibernateConfig;
 
 import java.io.BufferedReader;
@@ -25,8 +26,7 @@ public abstract class IntegrationBase {
 
     @BeforeEach
     protected void fillDatabaseTestData() {
-        try (
-                Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
             session.createSQLQuery(sqlCreateTables).executeUpdate();
@@ -38,8 +38,7 @@ public abstract class IntegrationBase {
 
     @AfterEach
     protected void clearDatabase() {
-        try (
-                Session session = sessionFactory.openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
             session.createSQLQuery(sqlDropTables).executeUpdate();
@@ -47,6 +46,50 @@ public abstract class IntegrationBase {
             session.getTransaction().commit();
         }
     }
+
+    @Test
+    void createWithTransactional() {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            create(session);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Test
+    void readWithTransactional() {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            read(session);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Test
+    void updateWithTransactional() {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            update(session);
+            session.getTransaction().commit();
+        }
+    }
+
+    @Test
+    void deleteWithTransactional() {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            delete(session);
+            session.getTransaction().commit();
+        }
+    }
+
+
+
+
+    abstract void create(Session session);
+    abstract void update(Session session);
+    abstract void delete(Session session);
+    abstract void read(Session session);
 
     private static String readSqlScript(String filename) {
         InputStream dataStream = IntegrationBase.class.getClassLoader().getResourceAsStream(filename);

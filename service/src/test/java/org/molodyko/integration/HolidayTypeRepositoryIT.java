@@ -1,6 +1,6 @@
 package org.molodyko.integration;
 
-import org.junit.jupiter.api.Test;
+import org.hibernate.Session;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.HolidayType;
 import org.molodyko.entity.User;
@@ -21,37 +21,31 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
     private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
     private final HolidayTypeRepository holidayTypeRepository = new HolidayTypeRepository(sessionFactory);
 
-
-    @Test
-    public void createHolidayType() {
-
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+    public void create(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
         HolidayType holidayType = HolidayType.builder()
                 .name("отпуск в горы")
                 .category(category)
                 .user(user)
                 .build();
-        holidayTypeRepository.save(holidayType);
+        holidayTypeRepository.save(holidayType, session);
 
-        HolidayType createdHolidayType = holidayTypeRepository.findById(CREATED_HOLIDAY_TYPE_ID.id());
+        HolidayType createdHolidayType = holidayTypeRepository.findById(CREATED_HOLIDAY_TYPE_ID.id(), session);
         assertThat(createdHolidayType).isNotNull();
     }
 
-    @Test
-    public void readHolidayType() {
-        HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id());
+    public void read(Session session) {
+        HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id(), session);
 
         assertThat(holidayType.getName()).isEqualTo("отпуск на море");
         assertThat(holidayType.getUser().getUsername()).isEqualTo("abl");
         assertThat(holidayType.getCategory().getName()).isEqualTo("vacation");
     }
 
-    @Test
-    public void updateHolidayType() {
-
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+    public void update(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
         HolidayType holidayType = HolidayType.builder()
                 .user(user)
                 .category(category)
@@ -59,17 +53,16 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
                 .name("отпуск в горы")
                 .build();
 
-        holidayTypeRepository.update(holidayType);
+        holidayTypeRepository.update(holidayType, session);
 
-        HolidayType holidayTypeGet = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id());
+        HolidayType holidayTypeGet = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id(), session);
         assertThat(holidayTypeGet.getName()).isEqualTo(holidayType.getName());
     }
 
-    @Test
-    public void deleteHolidayType() {
-        holidayTypeRepository.deleteById(FOR_DELETE_HOLIDAY_TYPE_ID.id());
+    public void delete(Session session) {
+        holidayTypeRepository.deleteById(FOR_DELETE_HOLIDAY_TYPE_ID.id(), session);
 
-        HolidayType holidayType = holidayTypeRepository.findById(FOR_DELETE_HOLIDAY_TYPE_ID.id());
+        HolidayType holidayType = holidayTypeRepository.findById(FOR_DELETE_HOLIDAY_TYPE_ID.id(), session);
         assertNull(holidayType);
     }
 }

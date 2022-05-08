@@ -1,6 +1,7 @@
 package org.molodyko.integration;
 
 import org.assertj.core.api.Assertions;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.User;
 import org.molodyko.entity.UserRole;
@@ -16,8 +17,7 @@ import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_USER_ID;
 public class UserRepositoryIT extends IntegrationBase {
     private final UserRepository userRepository = new UserRepository(sessionFactory);
 
-    @Test
-    public void createUser() {
+    public void create(Session session) {
         User user = User.builder()
                 .username("ablazzing")
                 .email("y288@ay.ru")
@@ -25,12 +25,11 @@ public class UserRepositoryIT extends IntegrationBase {
                 .password("kkkk")
                 .build();
 
-        userRepository.save(user);
+        userRepository.save(user, session);
     }
 
-    @Test
-    public void readUser() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+    public void read(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
 
         assertThat(user.getEmail()).isEqualTo("test@ya.ru");
         assertThat(user.getPassword()).isEqualTo("pass");
@@ -38,8 +37,7 @@ public class UserRepositoryIT extends IntegrationBase {
         assertThat(user.getRole()).isEqualTo(UserRole.ADMIN);
     }
 
-    @Test
-    public void updateUser() {
+    public void update(Session session) {
         User user = User.builder()
                 .id(EXISTED_USER_ID.id())
                 .username("abl")
@@ -47,25 +45,28 @@ public class UserRepositoryIT extends IntegrationBase {
                 .email("test@ya.ru")
                 .role(UserRole.USER)
                 .build();
-        userRepository.update(user);
+        userRepository.update(user, session);
 
-        User updatedUser = userRepository.findById(EXISTED_USER_ID.id());
+        User updatedUser = userRepository.findById(EXISTED_USER_ID.id(), session);
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
     }
 
-    @Test
-    public void deleteUser() {
-        userRepository.deleteById(FOR_DELETE_USER_ID.id());
-        User deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id());
+    public void delete(Session session) {
+        userRepository.deleteById(FOR_DELETE_USER_ID.id(), session);
+        User deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id(), session);
         assertThat(deletedUser).isNull();
     }
 
     @Test
     public void checkUserFilter() {
-        UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
 
-        List<User> list = userRepository.getUsersByFilter(filter);
+            List<User> list = userRepository.getUsersByFilter(filter, session);
 
-        Assertions.assertThat(list).hasSize(2);
+            Assertions.assertThat(list).hasSize(2);
+            session.getTransaction().commit();
+        }
     }
 }

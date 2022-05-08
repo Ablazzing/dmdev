@@ -1,5 +1,6 @@
 package org.molodyko.integration;
 
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.Entry;
@@ -25,27 +26,24 @@ public class EntryRepositoryIT extends IntegrationBase {
     private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
     private final EntryRepository entryRepository = new EntryRepository(sessionFactory);
 
-    @Test
-    public void createEntry() {
-
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+    public void create(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
         Entry entry = Entry.builder()
                 .amount(BigDecimal.valueOf(1000d))
                 .date(LocalDateTime.MAX)
                 .operationNumber(1)
                 .category(category)
                 .description("some_text2").user(user).build();
-        entryRepository.save(entry);
+        entryRepository.save(entry, session);
 
-        Entry createdEntry = entryRepository.findById(4);
+        Entry createdEntry = entryRepository.findById(4, session);
         assertThat(createdEntry).isNotNull();
 
     }
 
-    @Test
-    public void readEntry() {
-        Entry entry = entryRepository.findById(EXISTED_ENTRY_ID.id());
+    public void read(Session session) {
+        Entry entry = entryRepository.findById(EXISTED_ENTRY_ID.id(), session);
 
         assertThat(entry.getAmount().compareTo(BigDecimal.valueOf(1000d))).isEqualTo(0);
         assertThat(entry.getDescription()).isEqualTo("some_text");
@@ -55,10 +53,9 @@ public class EntryRepositoryIT extends IntegrationBase {
         assertThat(entry.getDate()).isEqualTo(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
     }
 
-    @Test
-    public void updateEntry() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+    public void update(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
 
         Entry entry = Entry.builder().id(EXISTED_ENTRY_ID.id())
                 .user(user).category(category)
@@ -67,35 +64,38 @@ public class EntryRepositoryIT extends IntegrationBase {
                 .amount(BigDecimal.valueOf(1000d))
                 .date(LocalDateTime.MIN)
                 .build();
-        entryRepository.update(entry);
+        entryRepository.update(entry, session);
 
-        Entry updatedEntry = entryRepository.findById(EXISTED_USER_ID.id());
+        Entry updatedEntry = entryRepository.findById(EXISTED_USER_ID.id(), session);
         assertThat(updatedEntry.getOperationNumber()).isEqualTo(4);
         assertThat(updatedEntry.getDescription()).isEqualTo("some_text3");
     }
 
-    @Test
-    public void deleteEntry() {
-        entryRepository.deleteById(EXISTED_ENTRY_ID.id());
+    public void delete(Session session) {
+        entryRepository.deleteById(EXISTED_ENTRY_ID.id(), session);
 
-        Entry deletedEntry = entryRepository.findById(EXISTED_ENTRY_ID.id());
+        Entry deletedEntry = entryRepository.findById(EXISTED_ENTRY_ID.id(), session);
         assertThat(deletedEntry).isNull();
     }
 
     @Test
     public void checkEntryFilter() {
-        EntryFilter entryFilter = EntryFilter.builder()
-                .dateStart(LocalDateTime.of(2019, 1, 1, 0, 0, 0))
-                .dateEnd(LocalDateTime.of(2021, 1, 1, 0, 0, 0))
-                .build();
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            EntryFilter entryFilter = EntryFilter.builder()
+                    .dateStart(LocalDateTime.of(2019, 1, 1, 0, 0, 0))
+                    .dateEnd(LocalDateTime.of(2021, 1, 1, 0, 0, 0))
+                    .build();
 
-        List<Entry> entries = entryRepository.getEntriesByFilter(entryFilter);
-        BigDecimal entrySum = entries.stream().map(Entry::getAmount)
-                .collect(Collectors.reducing(BigDecimal.ZERO, Function.identity(), BigDecimal::add));
+            List<Entry> entries = entryRepository.getEntriesByFilter(entryFilter, session);
+            BigDecimal entrySum = entries.stream().map(Entry::getAmount)
+                    .collect(Collectors.reducing(BigDecimal.ZERO, Function.identity(), BigDecimal::add));
 
-        BigDecimal expectedSum = BigDecimal.valueOf(3000d);
+            BigDecimal expectedSum = BigDecimal.valueOf(3000d);
 
-        assertThat(entries).hasSize(2);
-        assertThat(entrySum.compareTo(expectedSum)).isEqualTo(0);
+            assertThat(entries).hasSize(2);
+            assertThat(entrySum.compareTo(expectedSum)).isEqualTo(0);
+            session.getTransaction().commit();
+        }
     }
 }

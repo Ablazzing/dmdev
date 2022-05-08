@@ -1,6 +1,6 @@
 package org.molodyko.integration;
 
-import org.junit.jupiter.api.Test;
+import org.hibernate.Session;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.User;
 import org.molodyko.repository.CategoryRepository;
@@ -16,39 +16,35 @@ public class CategoryRepositoryIT extends IntegrationBase {
     private final UserRepository userRepository = new UserRepository(sessionFactory);
     private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
 
-    @Test
-    public void createCategory() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+    public void create(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category food = Category.builder().name("food").user(user).build();
-        categoryRepository.save(food);
+        categoryRepository.save(food, session);
 
-        Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id());
+        Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id(), session);
         assertThat(createdCategory).isNotNull();
     }
 
-    @Test
-    public void readCategory() {
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+    public void read(Session session) {
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
 
         assertThat(category.getName()).isEqualTo("vacation");
         assertThat(category.getUser().getUsername()).isEqualTo("abl");
     }
 
-    @Test
-    public void updateCategory() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+    public void update(Session session) {
+        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
-        categoryRepository.update(category);
+        categoryRepository.update(category, session);
 
-        Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
         assertThat(updatedCategory.getName()).isEqualTo("animal");
     }
 
-    @Test
-    public void deleteCategory() {
-        categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id());
+    public void delete(Session session) {
+        categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id(), session);
 
-        Category deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());
+        Category deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id(), session);
         assertThat(deletedCategory).isNull();
     }
 }
