@@ -9,16 +9,17 @@ import org.molodyko.entity.filter.EntryFilter;
 import org.molodyko.entity.utils.QPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static org.molodyko.entity.QEntry.entry;
 
-@Component
+@Repository
 public class EntryRepository extends BaseRepository<Entry, Integer> {
 
     @Autowired
-    public EntryRepository(SessionFactory sessionFactory) {
+    public EntryRepository() {
         super(Entry.class);
     }
 

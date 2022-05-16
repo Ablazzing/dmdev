@@ -4,12 +4,13 @@ import org.hibernate.SessionFactory;
 import org.molodyko.entity.DescriptionChanger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class DescriptionChangerRepository extends BaseRepository<DescriptionChanger, Integer> {
 
     @Autowired
-    public DescriptionChangerRepository(SessionFactory sessionFactory) {
+    public DescriptionChangerRepository() {
         super(DescriptionChanger.class);
     }
 }

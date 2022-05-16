@@ -23,6 +23,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
     @Autowired
     private DescriptionChangerRepository descrRepository;
 
+    @Override
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
@@ -38,6 +39,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
         assertThat(changer).isNotNull();
     }
 
+    @Override
     public void read(Session session) {
         DescriptionChanger descriptionChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id(), session);
 
@@ -46,6 +48,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
         assertThat(descriptionChanger.getCategory().getName()).isEqualTo("vacation");
     }
 
+    @Override
     public void update(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
@@ -61,6 +64,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
 
     }
 
+    @Override
     public void delete(Session session) {
         descrRepository.deleteById(EXISTED_DESCRIPTION_CHANGER_ID.id(), session);
 

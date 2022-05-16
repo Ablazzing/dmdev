@@ -2,6 +2,7 @@ package org.molodyko.repository;
 
 import org.hibernate.Session;
 import org.molodyko.entity.BaseEntity;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

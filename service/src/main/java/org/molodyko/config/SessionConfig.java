@@ -1,13 +1,12 @@
-package org.molodyko;
+package org.molodyko.config;
 
 import org.hibernate.SessionFactory;
+import org.molodyko.HibernateConfig;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("org.molodyko")
-public class SpringConfig {
+public class SessionConfig {
 
     @Bean("sessionFactory")
     public SessionFactory getSessionFactory() {

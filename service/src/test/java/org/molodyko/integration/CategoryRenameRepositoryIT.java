@@ -27,6 +27,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
     @Autowired
     private CategoryRenameRepository categoryRenameRepository;
 
+    @Override
     public void create(Session session) {
         Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
         Category categoryAfter = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id(), session);
@@ -43,6 +44,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
 
     }
 
+    @Override
     public void read(Session session) {
         CategoryRename categoryRename = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id(), session);
 
@@ -51,6 +53,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
         assertThat(categoryRename.getUser().getUsername()).isEqualTo("abl");
     }
 
+    @Override
     public void update(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id(), session);
@@ -68,6 +71,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
         assertThat(updatedRenamer.getCategoryAfter().getId()).isEqualTo(FOR_DELETE_CATEGORY_ID.id());
     }
 
+    @Override
     public void delete(Session session) {
         categoryRenameRepository.deleteById(EXISTED_CATEGORY_RENAME_ID.id(), session);
 

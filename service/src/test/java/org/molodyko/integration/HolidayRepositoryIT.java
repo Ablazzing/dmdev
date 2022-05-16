@@ -28,6 +28,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
     @Autowired
     private HolidayRepository holidayRepository;
 
+    @Override
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id(), session);
@@ -43,6 +44,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
         assertThat(createdHoliday).isNotNull();
     }
 
+    @Override
     public void read(Session session) {
         Holiday holiday = holidayRepository.findById(EXISTED_HOLIDAY_ID.id(), session);
 
@@ -55,6 +57,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
 
     }
 
+    @Override
     public void update(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id(), session);
@@ -71,6 +74,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
         //assertThat(updatedHoliday.getStartDate()).isEqualTo(LocalDate.MIN);
     }
 
+    @Override
     public void delete(Session session) {
         holidayRepository.deleteById(EXISTED_HOLIDAY_ID.id(), session);
 

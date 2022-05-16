@@ -4,12 +4,13 @@ import org.hibernate.SessionFactory;
 import org.molodyko.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class CategoryRepository extends BaseRepository<Category, Integer> {
 
     @Autowired
-    public CategoryRepository(SessionFactory sessionFactory) {
+    public CategoryRepository() {
         super(Category.class);
     }
 }

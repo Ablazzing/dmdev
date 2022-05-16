@@ -20,6 +20,7 @@ public class UserRepositoryIT extends IntegrationBase {
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public void create(Session session) {
         User user = User.builder()
                 .username("ablazzing")
@@ -31,6 +32,7 @@ public class UserRepositoryIT extends IntegrationBase {
         userRepository.save(user, session);
     }
 
+    @Override
     public void read(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
 
@@ -40,6 +42,7 @@ public class UserRepositoryIT extends IntegrationBase {
         assertThat(user.getRole()).isEqualTo(UserRole.ADMIN);
     }
 
+    @Override
     public void update(Session session) {
         User user = User.builder()
                 .id(EXISTED_USER_ID.id())
@@ -54,6 +57,7 @@ public class UserRepositoryIT extends IntegrationBase {
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
     }
 
+    @Override
     public void delete(Session session) {
         userRepository.deleteById(FOR_DELETE_USER_ID.id(), session);
         User deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id(), session);
@@ -68,7 +72,7 @@ public class UserRepositoryIT extends IntegrationBase {
 
             List<User> list = userRepository.getUsersByFilter(filter, session);
 
-            Assertions.assertThat(list).hasSize(2);
+            assertThat(list).hasSize(2);
             session.getTransaction().commit();
         }
     }

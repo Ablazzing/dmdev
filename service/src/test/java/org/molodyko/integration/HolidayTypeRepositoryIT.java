@@ -28,6 +28,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
     @Autowired
     private HolidayTypeRepository holidayTypeRepository;
 
+    @Override
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
@@ -42,6 +43,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
         assertThat(createdHolidayType).isNotNull();
     }
 
+    @Override
     public void read(Session session) {
         HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id(), session);
 
@@ -50,6 +52,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
         assertThat(holidayType.getCategory().getName()).isEqualTo("vacation");
     }
 
+    @Override
     public void update(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
@@ -66,6 +69,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
         assertThat(holidayTypeGet.getName()).isEqualTo(holidayType.getName());
     }
 
+    @Override
     public void delete(Session session) {
         holidayTypeRepository.deleteById(FOR_DELETE_HOLIDAY_TYPE_ID.id(), session);
 

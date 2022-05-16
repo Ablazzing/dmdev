@@ -21,6 +21,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Override
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category food = Category.builder().name("food").user(user).build();
@@ -30,6 +31,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
         assertThat(createdCategory).isNotNull();
     }
 
+    @Override
     public void read(Session session) {
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
 
@@ -37,6 +39,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
         assertThat(category.getUser().getUsername()).isEqualTo("abl");
     }
 
+    @Override
     public void update(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
@@ -46,6 +49,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
         assertThat(updatedCategory.getName()).isEqualTo("animal");
     }
 
+    @Override
     public void delete(Session session) {
         categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id(), session);
 

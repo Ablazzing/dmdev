@@ -1,5 +1,6 @@
 package org.molodyko.integration;
 
+import org.assertj.core.api.AbstractBigIntegerAssert;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
@@ -33,6 +34,7 @@ public class EntryRepositoryIT extends IntegrationBase {
     @Autowired
     private EntryRepository entryRepository;
 
+    @Override
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
@@ -49,6 +51,7 @@ public class EntryRepositoryIT extends IntegrationBase {
 
     }
 
+    @Override
     public void read(Session session) {
         Entry entry = entryRepository.findById(EXISTED_ENTRY_ID.id(), session);
 
@@ -60,6 +63,7 @@ public class EntryRepositoryIT extends IntegrationBase {
         assertThat(entry.getDate()).isEqualTo(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
     }
 
+    @Override
     public void update(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
@@ -78,6 +82,7 @@ public class EntryRepositoryIT extends IntegrationBase {
         assertThat(updatedEntry.getDescription()).isEqualTo("some_text3");
     }
 
+    @Override
     public void delete(Session session) {
         entryRepository.deleteById(EXISTED_ENTRY_ID.id(), session);
 
@@ -101,7 +106,7 @@ public class EntryRepositoryIT extends IntegrationBase {
             BigDecimal expectedSum = BigDecimal.valueOf(3000d);
 
             assertThat(entries).hasSize(2);
-            assertThat(entrySum.compareTo(expectedSum)).isEqualTo(0);
+            assertThat(expectedSum).isEqualTo("3000.0");
             session.getTransaction().commit();
         }
     }
