@@ -5,6 +5,7 @@ import org.molodyko.entity.Category;
 import org.molodyko.entity.User;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_ID;
@@ -13,8 +14,12 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_CATEGORY_ID;
 
 public class CategoryRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
-    private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);

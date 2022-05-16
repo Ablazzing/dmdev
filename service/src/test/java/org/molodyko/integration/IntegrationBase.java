@@ -2,11 +2,13 @@ package org.molodyko.integration;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.molodyko.HibernateConfig;
+import org.molodyko.Runner;
+import org.molodyko.SpringConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -14,9 +16,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
+@SpringBootTest(classes = {Runner.class, SpringConfig.class})
 public abstract class IntegrationBase {
-    protected static final Configuration configuration = HibernateConfig.getConfig();
-    protected static final SessionFactory sessionFactory = configuration.buildSessionFactory();
+    @Autowired
+    protected SessionFactory sessionFactory;
 
     private final String sqlCreateTables = readSqlScript("create_tables.sql");
 

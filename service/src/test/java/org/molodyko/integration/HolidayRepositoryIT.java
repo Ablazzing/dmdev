@@ -7,6 +7,7 @@ import org.molodyko.entity.User;
 import org.molodyko.repository.HolidayRepository;
 import org.molodyko.repository.HolidayTypeRepository;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -17,9 +18,15 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_HOLIDAY_TYPE_ID;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 
 public class HolidayRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
-    private final HolidayTypeRepository holidayTypeRepository = new HolidayTypeRepository(sessionFactory);
-    private final HolidayRepository holidayRepository = new HolidayRepository(sessionFactory);
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private HolidayTypeRepository holidayTypeRepository;
+
+    @Autowired
+    private HolidayRepository holidayRepository;
 
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);

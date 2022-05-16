@@ -7,6 +7,7 @@ import org.molodyko.entity.User;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.DescriptionChangerRepository;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_DESCRIPTION_CHANGER_ID;
@@ -15,9 +16,12 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_DESCRIPTION_CHAN
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 
 public class DescriptionChangerRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
-    private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
-    private final DescriptionChangerRepository descrRepository = new DescriptionChangerRepository(sessionFactory);
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private DescriptionChangerRepository descrRepository;
 
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);

@@ -7,6 +7,7 @@ import org.molodyko.entity.User;
 import org.molodyko.repository.CategoryRenameRepository;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_RENAME_ID;
@@ -17,9 +18,14 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_CATEGORY_ID;
 
 public class CategoryRenameRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
-    private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
-    private final CategoryRenameRepository categoryRenameRepository = new CategoryRenameRepository(sessionFactory);
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CategoryRenameRepository categoryRenameRepository;
 
     public void create(Session session) {
         Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);

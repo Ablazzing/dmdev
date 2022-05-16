@@ -7,6 +7,7 @@ import org.molodyko.entity.User;
 import org.molodyko.entity.UserRole;
 import org.molodyko.entity.filter.UserFilter;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -15,7 +16,9 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_USER_ID;
 
 public class UserRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
+
+    @Autowired
+    private UserRepository userRepository;
 
     public void create(Session session) {
         User user = User.builder()

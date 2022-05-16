@@ -9,6 +9,7 @@ import org.molodyko.entity.filter.EntryFilter;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.EntryRepository;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,9 +23,15 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_ENTRY_ID;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 
 public class EntryRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
-    private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
-    private final EntryRepository entryRepository = new EntryRepository(sessionFactory);
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private EntryRepository entryRepository;
 
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);

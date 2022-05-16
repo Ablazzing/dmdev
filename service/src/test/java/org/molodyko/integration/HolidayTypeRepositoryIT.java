@@ -7,6 +7,7 @@ import org.molodyko.entity.User;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.HolidayTypeRepository;
 import org.molodyko.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,9 +18,15 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_HOLIDAY_TYPE_ID;
 
 public class HolidayTypeRepositoryIT extends IntegrationBase {
-    private final UserRepository userRepository = new UserRepository(sessionFactory);
-    private final CategoryRepository categoryRepository = new CategoryRepository(sessionFactory);
-    private final HolidayTypeRepository holidayTypeRepository = new HolidayTypeRepository(sessionFactory);
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private HolidayTypeRepository holidayTypeRepository;
 
     public void create(Session session) {
         User user = userRepository.findById(EXISTED_USER_ID.id(), session);

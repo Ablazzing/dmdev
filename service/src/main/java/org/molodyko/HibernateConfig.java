@@ -21,7 +21,7 @@ public class HibernateConfig {
         configuration.addAnnotatedClass(DescriptionChanger.class);
         configuration.addAnnotatedClass(Entry.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-        configuration.configure();
+        configuration.configure("hibernate.cfg.xml");
         return configuration;
     }
 }
