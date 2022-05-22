@@ -9,6 +9,8 @@ import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_RENAME_ID;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_CATEGORY_ANOTHER_ID;

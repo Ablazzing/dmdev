@@ -5,7 +5,7 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.molodyko.Runner;
+import org.molodyko.ApplicationRunner;
 import org.molodyko.config.SessionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-@SpringBootTest(classes = {Runner.class, SessionConfig.class})
+@SpringBootTest
 public abstract class IntegrationBase {
     @Autowired
     protected SessionFactory sessionFactory;
