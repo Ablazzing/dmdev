@@ -1,6 +1,7 @@
 package org.molodyko.integration;
 
-import org.hibernate.Session;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.CategoryRename;
 import org.molodyko.entity.User;
@@ -19,47 +20,45 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_CATEGORY_RENAME_
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_CATEGORY_ID;
 
+@Transactional
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CategoryRenameRepositoryIT extends IntegrationBase {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryRenameRepository categoryRenameRepository;
 
-    @Autowired
-    private CategoryRenameRepository categoryRenameRepository;
-
-    @Override
-    public void create(Session session) {
-        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
-        Category categoryAfter = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id(), session);
-        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+    @Test
+    public void create() {
+        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        Category categoryAfter = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id());
         CategoryRename categoryRename = CategoryRename.builder()
                 .categoryAfter(categoryAfter)
                 .categoryBefore(categoryBefore)
                 .user(user)
                 .build();
-        categoryRenameRepository.save(categoryRename, session);
+        categoryRenameRepository.save(categoryRename);
 
-        CategoryRename createdRenamer = categoryRenameRepository.findById(CREATED_CATEGORY_RENAME_ID.id(), session);
+        CategoryRename createdRenamer = categoryRenameRepository.findById(CREATED_CATEGORY_RENAME_ID.id());
         assertThat(createdRenamer).isNotNull();
 
     }
 
-    @Override
-    public void read(Session session) {
-        CategoryRename categoryRename = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id(), session);
+    @Test
+    public void read() {
+        CategoryRename categoryRename = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
 
         assertThat(categoryRename.getCategoryBefore().getName()).isEqualTo("vacation");
         assertThat(categoryRename.getCategoryAfter().getName()).isEqualTo("car");
         assertThat(categoryRename.getUser().getUsername()).isEqualTo("abl");
     }
 
-    @Override
-    public void update(Session session) {
-        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
-        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id(), session);
-        Category categoryAfter = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id(), session);
+    @Test
+    public void update() {
+        User user = userRepository.findById(EXISTED_USER_ID.id());
+        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id());
+        Category categoryAfter = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());
         CategoryRename categoryRename = CategoryRename.builder()
                 .id(EXISTED_CATEGORY_RENAME_ID.id())
                 .user(user)
@@ -67,17 +66,17 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
                 .categoryAfter(categoryAfter)
                 .build();
 
-        categoryRenameRepository.update(categoryRename, session);
+        categoryRenameRepository.update(categoryRename);
 
-        CategoryRename updatedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id(), session);
+        CategoryRename updatedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
         assertThat(updatedRenamer.getCategoryAfter().getId()).isEqualTo(FOR_DELETE_CATEGORY_ID.id());
     }
 
-    @Override
-    public void delete(Session session) {
-        categoryRenameRepository.deleteById(EXISTED_CATEGORY_RENAME_ID.id(), session);
+    @Test
+    public void delete() {
+        categoryRenameRepository.deleteById(EXISTED_CATEGORY_RENAME_ID.id());
 
-        CategoryRename deletedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id(), session);
+        CategoryRename deletedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
         assertThat(deletedRenamer).isNull();
     }
 }

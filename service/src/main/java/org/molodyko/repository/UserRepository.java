@@ -1,13 +1,10 @@
 package org.molodyko.repository;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.molodyko.entity.User;
 import org.molodyko.entity.User_;
 import org.molodyko.entity.filter.UserFilter;
 import org.molodyko.entity.utils.CriteriaPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,8 +21,8 @@ public class UserRepository extends BaseRepository<User, Integer> {
         super(User.class);
     }
 
-    public List<User> getUsersByFilter(UserFilter userFilter, Session session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
+    public List<User> getUsersByFilter(UserFilter userFilter) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
         Root<User> user = criteria.from(User.class);
@@ -35,7 +32,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
                 .getPredicates();
 
         criteria.select(user).where(predicate);
-        List<User> users = session.createQuery(criteria).list();
+        List<User> users = entityManager.createQuery(criteria).getResultList();
         return users;
     }
 }

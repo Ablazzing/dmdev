@@ -1,15 +1,11 @@
 package org.molodyko.integration;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.molodyko.ApplicationRunner;
-import org.molodyko.config.SessionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,78 +14,13 @@ import java.util.stream.Collectors;
 
 @SpringBootTest
 public abstract class IntegrationBase {
-    @Autowired
-    protected SessionFactory sessionFactory;
-
     private final String sqlCreateTables = readSqlScript("create_tables.sql");
-
     private final String sqlInsertData = readSqlScript("insert_data.sql");
 
-    private String sqlDropTables = "DROP ALL OBJECTS";
+    @Autowired
+    EntityManager entityManager;
 
-    @BeforeEach
-    protected void fillDatabaseTestData() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-
-            session.createSQLQuery(sqlCreateTables).executeUpdate();
-            session.createSQLQuery(sqlInsertData).executeUpdate();
-
-            session.getTransaction().commit();
-        }
-    }
-
-    @AfterEach
-    protected void clearDatabase() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-
-            session.createSQLQuery(sqlDropTables).executeUpdate();
-
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void createWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            create(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void readWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            read(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void updateWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            update(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void deleteWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            delete(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    abstract void create(Session session);
-    abstract void update(Session session);
-    abstract void delete(Session session);
-    abstract void read(Session session);
+    private final String sqlDropTables = "DROP ALL OBJECTS";
 
     private static String readSqlScript(String filename) {
         InputStream dataStream = IntegrationBase.class.getClassLoader().getResourceAsStream(filename);
@@ -97,4 +28,14 @@ public abstract class IntegrationBase {
         return bufferedReader.lines().collect(Collectors.joining());
     }
 
+    @BeforeEach
+    protected void fillDatabaseTestData() {
+        entityManager.createNativeQuery(sqlCreateTables).executeUpdate();
+        entityManager.createNativeQuery(sqlInsertData).executeUpdate();
+    }
+
+    @AfterEach
+    protected void clearDatabase() {
+        entityManager.createNativeQuery(sqlDropTables).executeUpdate();
+    }
 }

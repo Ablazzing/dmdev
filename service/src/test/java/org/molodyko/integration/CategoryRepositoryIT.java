@@ -1,11 +1,14 @@
 package org.molodyko.integration;
 
-import org.hibernate.Session;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.User;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.transaction.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_ID;
@@ -13,47 +16,46 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_CATEGORY_ID;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_CATEGORY_ID;
 
+@Transactional
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CategoryRepositoryIT extends IntegrationBase {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Override
-    public void create(Session session) {
-        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+    @Test
+    public void create() {
+        User user = userRepository.findById(EXISTED_USER_ID.id());
         Category food = Category.builder().name("food").user(user).build();
-        categoryRepository.save(food, session);
+        categoryRepository.save(food);
 
-        Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id(), session);
+        Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id());
         assertThat(createdCategory).isNotNull();
     }
 
-    @Override
-    public void read(Session session) {
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
+    @Test
+    public void read() {
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
 
         assertThat(category.getName()).isEqualTo("vacation");
         assertThat(category.getUser().getUsername()).isEqualTo("abl");
     }
 
-    @Override
-    public void update(Session session) {
-        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+    @Test
+    public void update() {
+        User user = userRepository.findById(EXISTED_USER_ID.id());
         Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
-        categoryRepository.update(category, session);
+        categoryRepository.update(category);
 
-        Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id(), session);
+        Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
         assertThat(updatedCategory.getName()).isEqualTo("animal");
     }
 
-    @Override
-    public void delete(Session session) {
-        categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id(), session);
+    @Test
+    public void delete() {
+        categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id());
 
-        Category deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id(), session);
+        Category deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());
         assertThat(deletedCategory).isNull();
     }
 }

@@ -1,2 +1,13 @@
-my:
-  home: hi_all
+spring:
+  datasource:
+    username:  postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/test
+  jpa:
+    properties:
+      hiberante:
+        show_sql: true
+        format_sql: true
+
+

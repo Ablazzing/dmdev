@@ -1,7 +1,6 @@
 package org.molodyko.integration;
 
-import org.assertj.core.api.Assertions;
-import org.hibernate.Session;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.User;
 import org.molodyko.entity.UserRole;
@@ -9,19 +8,21 @@ import org.molodyko.entity.filter.UserFilter;
 import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_USER_ID;
 
+@Transactional
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserRepositoryIT extends IntegrationBase {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Override
-    public void create(Session session) {
+    @Test
+    public void create() {
         User user = User.builder()
                 .username("ablazzing")
                 .email("y288@ay.ru")
@@ -29,12 +30,12 @@ public class UserRepositoryIT extends IntegrationBase {
                 .password("kkkk")
                 .build();
 
-        userRepository.save(user, session);
+        userRepository.save(user);
     }
 
-    @Override
-    public void read(Session session) {
-        User user = userRepository.findById(EXISTED_USER_ID.id(), session);
+    @Test
+    public void read() {
+        User user = userRepository.findById(EXISTED_USER_ID.id());
 
         assertThat(user.getEmail()).isEqualTo("test@ya.ru");
         assertThat(user.getPassword()).isEqualTo("pass");
@@ -42,8 +43,8 @@ public class UserRepositoryIT extends IntegrationBase {
         assertThat(user.getRole()).isEqualTo(UserRole.ADMIN);
     }
 
-    @Override
-    public void update(Session session) {
+    @Test
+    public void update() {
         User user = User.builder()
                 .id(EXISTED_USER_ID.id())
                 .username("abl")
@@ -51,29 +52,25 @@ public class UserRepositoryIT extends IntegrationBase {
                 .email("test@ya.ru")
                 .role(UserRole.USER)
                 .build();
-        userRepository.update(user, session);
+        userRepository.update(user);
 
-        User updatedUser = userRepository.findById(EXISTED_USER_ID.id(), session);
+        User updatedUser = userRepository.findById(EXISTED_USER_ID.id());
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
     }
 
-    @Override
-    public void delete(Session session) {
-        userRepository.deleteById(FOR_DELETE_USER_ID.id(), session);
-        User deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id(), session);
+    @Test
+    public void delete() {
+        userRepository.deleteById(FOR_DELETE_USER_ID.id());
+        User deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id());
         assertThat(deletedUser).isNull();
     }
 
     @Test
     public void checkUserFilter() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
+        UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
 
-            List<User> list = userRepository.getUsersByFilter(filter, session);
+        List<User> list = userRepository.getUsersByFilter(filter);
 
-            assertThat(list).hasSize(2);
-            session.getTransaction().commit();
-        }
+        assertThat(list).hasSize(2);
     }
 }
