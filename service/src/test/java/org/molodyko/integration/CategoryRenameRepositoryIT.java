@@ -11,6 +11,7 @@ import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_RENAME_ID;
@@ -30,9 +31,9 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
 
     @Test
     public void create() {
-        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
-        Category categoryAfter = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id());
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
+        Category categoryAfter = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id()).orElseThrow();
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         CategoryRename categoryRename = CategoryRename.builder()
                 .categoryAfter(categoryAfter)
                 .categoryBefore(categoryBefore)
@@ -40,14 +41,16 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
                 .build();
         categoryRenameRepository.save(categoryRename);
 
-        CategoryRename createdRenamer = categoryRenameRepository.findById(CREATED_CATEGORY_RENAME_ID.id());
+        CategoryRename createdRenamer = categoryRenameRepository.findById(CREATED_CATEGORY_RENAME_ID.id())
+                .orElseThrow();
         assertThat(createdRenamer).isNotNull();
 
     }
 
     @Test
     public void read() {
-        CategoryRename categoryRename = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
+        CategoryRename categoryRename = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id())
+                .orElseThrow();
 
         assertThat(categoryRename.getCategoryBefore().getName()).isEqualTo("vacation");
         assertThat(categoryRename.getCategoryAfter().getName()).isEqualTo("car");
@@ -56,9 +59,9 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
 
     @Test
     public void update() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id());
-        Category categoryAfter = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
+        Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id()).orElseThrow();
+        Category categoryAfter = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id()).orElseThrow();
         CategoryRename categoryRename = CategoryRename.builder()
                 .id(EXISTED_CATEGORY_RENAME_ID.id())
                 .user(user)
@@ -66,9 +69,10 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
                 .categoryAfter(categoryAfter)
                 .build();
 
-        categoryRenameRepository.update(categoryRename);
+        categoryRenameRepository.save(categoryRename);
 
-        CategoryRename updatedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
+        CategoryRename updatedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id())
+                .orElseThrow();
         assertThat(updatedRenamer.getCategoryAfter().getId()).isEqualTo(FOR_DELETE_CATEGORY_ID.id());
     }
 
@@ -76,7 +80,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
     public void delete() {
         categoryRenameRepository.deleteById(EXISTED_CATEGORY_RENAME_ID.id());
 
-        CategoryRename deletedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
-        assertThat(deletedRenamer).isNull();
+        Optional<CategoryRename> deletedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());
+        assertThat(deletedRenamer).isEmpty();
     }
 }

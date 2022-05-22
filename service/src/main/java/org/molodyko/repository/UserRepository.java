@@ -5,8 +5,10 @@ import org.molodyko.entity.User_;
 import org.molodyko.entity.filter.UserFilter;
 import org.molodyko.entity.utils.CriteriaPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -14,14 +16,9 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-public class UserRepository extends BaseRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @Autowired
-    public UserRepository() {
-        super(User.class);
-    }
-
-    public List<User> getUsersByFilter(UserFilter userFilter) {
+    default List<User> getUsersByFilter(UserFilter userFilter, EntityManager entityManager) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> criteria = cb.createQuery(User.class);

@@ -9,6 +9,7 @@ import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_CATEGORY_ID;
@@ -25,17 +26,17 @@ public class CategoryRepositoryIT extends IntegrationBase {
 
     @Test
     public void create() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category food = Category.builder().name("food").user(user).build();
         categoryRepository.save(food);
 
-        Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id());
+        Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id()).orElseThrow();
         assertThat(createdCategory).isNotNull();
     }
 
     @Test
     public void read() {
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
 
         assertThat(category.getName()).isEqualTo("vacation");
         assertThat(category.getUser().getUsername()).isEqualTo("abl");
@@ -43,11 +44,11 @@ public class CategoryRepositoryIT extends IntegrationBase {
 
     @Test
     public void update() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
-        categoryRepository.update(category);
+        categoryRepository.save(category);
 
-        Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         assertThat(updatedCategory.getName()).isEqualTo("animal");
     }
 
@@ -55,7 +56,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     public void delete() {
         categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id());
 
-        Category deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());
-        assertThat(deletedCategory).isNull();
+        Optional<Category> deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());
+        assertThat(deletedCategory).isEmpty();
     }
 }

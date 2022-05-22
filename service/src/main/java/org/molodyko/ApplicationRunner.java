@@ -11,7 +11,7 @@ public class ApplicationRunner {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(ApplicationRunner.class);
         UserRepository repository = context.getBean(UserRepository.class);
-        User user = repository.findById(1);
+        User user = repository.findById(1).orElseThrow();
         System.out.println(user);
     }
 }

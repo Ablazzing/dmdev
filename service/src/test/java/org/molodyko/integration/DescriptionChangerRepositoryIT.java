@@ -11,6 +11,7 @@ import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.CREATED_DESCRIPTION_CHANGER_ID;
@@ -28,8 +29,8 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
 
     @Test
     public void create() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
 
         DescriptionChanger descriptionChanger = DescriptionChanger.builder()
                 .user(user)
@@ -38,13 +39,14 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
                 .build();
         descrRepository.save(descriptionChanger);
 
-        DescriptionChanger changer = descrRepository.findById(CREATED_DESCRIPTION_CHANGER_ID.id());
+        DescriptionChanger changer = descrRepository.findById(CREATED_DESCRIPTION_CHANGER_ID.id()).orElseThrow();
         assertThat(changer).isNotNull();
     }
 
     @Test
     public void read() {
-        DescriptionChanger descriptionChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id());
+        DescriptionChanger descriptionChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id())
+                .orElseThrow();
 
         assertThat(descriptionChanger.getDescriptionPattern()).isEqualTo("some_text");
         assertThat(descriptionChanger.getUser().getUsername()).isEqualTo("abl");
@@ -53,16 +55,17 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
 
     @Test
     public void update() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         DescriptionChanger changer = DescriptionChanger.builder()
                 .user(user)
                 .category(category)
                 .descriptionPattern("new pattern")
                 .id(EXISTED_DESCRIPTION_CHANGER_ID.id()).build();
-        descrRepository.update(changer);
+        descrRepository.save(changer);
 
-        DescriptionChanger updatedChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id());
+        DescriptionChanger updatedChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id())
+                .orElseThrow();
         assertThat(updatedChanger.getDescriptionPattern()).isEqualTo("new pattern");
 
     }
@@ -71,7 +74,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
     public void delete() {
         descrRepository.deleteById(EXISTED_DESCRIPTION_CHANGER_ID.id());
 
-        DescriptionChanger deletedChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id());
-        assertThat(deletedChanger).isNull();
+        Optional<DescriptionChanger> deletedChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id());
+        assertThat(deletedChanger).isEmpty();
     }
 }

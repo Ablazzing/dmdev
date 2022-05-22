@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.molodyko.integration.DababaseEntityId.CREATED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 import static org.molodyko.integration.DababaseEntityId.FOR_DELETE_USER_ID;
 
@@ -31,11 +33,13 @@ public class UserRepositoryIT extends IntegrationBase {
                 .build();
 
         userRepository.save(user);
+        User newUser = userRepository.findById(CREATED_USER_ID.id()).orElseThrow();
+        assertThat(newUser).isNotNull();
     }
 
     @Test
     public void read() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
 
         assertThat(user.getEmail()).isEqualTo("test@ya.ru");
         assertThat(user.getPassword()).isEqualTo("pass");
@@ -52,24 +56,24 @@ public class UserRepositoryIT extends IntegrationBase {
                 .email("test@ya.ru")
                 .role(UserRole.USER)
                 .build();
-        userRepository.update(user);
+        userRepository.save(user);
 
-        User updatedUser = userRepository.findById(EXISTED_USER_ID.id());
+        User updatedUser = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
     }
 
     @Test
     public void delete() {
         userRepository.deleteById(FOR_DELETE_USER_ID.id());
-        User deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id());
-        assertThat(deletedUser).isNull();
+        Optional<User> deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id());
+        assertThat(deletedUser).isEmpty();
     }
 
     @Test
     public void checkUserFilter() {
         UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
 
-        List<User> list = userRepository.getUsersByFilter(filter);
+        List<User> list = userRepository.getUsersByFilter(filter, entityManager);
 
         assertThat(list).hasSize(2);
     }

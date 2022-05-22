@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.molodyko.integration.DababaseEntityId.EXISTED_CATEGORY_ID;
@@ -31,8 +32,8 @@ public class EntryRepositoryIT extends IntegrationBase {
 
     @Test
     public void create() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         Entry entry = Entry.builder()
                 .amount(BigDecimal.valueOf(1000d))
                 .date(LocalDateTime.MAX)
@@ -41,14 +42,13 @@ public class EntryRepositoryIT extends IntegrationBase {
                 .description("some_text2").user(user).build();
         entryRepository.save(entry);
 
-        Entry createdEntry = entryRepository.findById(4);
+        Entry createdEntry = entryRepository.findById(4).orElseThrow();
         assertThat(createdEntry).isNotNull();
-
     }
 
     @Test
     public void read() {
-        Entry entry = entryRepository.findById(EXISTED_ENTRY_ID.id());
+        Entry entry = entryRepository.findById(EXISTED_ENTRY_ID.id()).orElseThrow();
 
         assertThat(entry.getAmount().compareTo(BigDecimal.valueOf(1000d))).isEqualTo(0);
         assertThat(entry.getDescription()).isEqualTo("some_text");
@@ -60,8 +60,8 @@ public class EntryRepositoryIT extends IntegrationBase {
 
     @Test
     public void update() {
-        User user = userRepository.findById(EXISTED_USER_ID.id());
-        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id());
+        User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
+        Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
 
         Entry entry = Entry.builder().id(EXISTED_ENTRY_ID.id())
                 .user(user).category(category)
@@ -70,9 +70,9 @@ public class EntryRepositoryIT extends IntegrationBase {
                 .amount(BigDecimal.valueOf(1000d))
                 .date(LocalDateTime.MIN)
                 .build();
-        entryRepository.update(entry);
+        entryRepository.save(entry);
 
-        Entry updatedEntry = entryRepository.findById(EXISTED_USER_ID.id());
+        Entry updatedEntry = entryRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         assertThat(updatedEntry.getOperationNumber()).isEqualTo(4);
         assertThat(updatedEntry.getDescription()).isEqualTo("some_text3");
     }
@@ -81,8 +81,8 @@ public class EntryRepositoryIT extends IntegrationBase {
     public void delete() {
         entryRepository.deleteById(EXISTED_ENTRY_ID.id());
 
-        Entry deletedEntry = entryRepository.findById(EXISTED_ENTRY_ID.id());
-        assertThat(deletedEntry).isNull();
+        Optional<Entry> deletedEntry = entryRepository.findById(EXISTED_ENTRY_ID.id());
+        assertThat(deletedEntry).isEmpty();
     }
 
     @Test
@@ -92,7 +92,7 @@ public class EntryRepositoryIT extends IntegrationBase {
                 .dateEnd(LocalDateTime.of(2021, 1, 1, 0, 0, 0))
                 .build();
 
-        List<Entry> entries = entryRepository.getEntriesByFilter(entryFilter);
+        List<Entry> entries = entryRepository.getEntriesByFilter(entryFilter, entityManager);
 
         BigDecimal expectedSum = BigDecimal.valueOf(3000d);
 
