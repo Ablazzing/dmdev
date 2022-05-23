@@ -39,7 +39,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
                 .categoryBefore(categoryBefore)
                 .user(user)
                 .build();
-        categoryRenameRepository.save(categoryRename);
+        categoryRenameRepository.saveAndFlush(categoryRename);
 
         CategoryRename createdRenamer = categoryRenameRepository.findById(CREATED_CATEGORY_RENAME_ID.id())
                 .orElseThrow();
@@ -69,7 +69,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
                 .categoryAfter(categoryAfter)
                 .build();
 
-        categoryRenameRepository.save(categoryRename);
+        categoryRenameRepository.saveAndFlush(categoryRename);
 
         CategoryRename updatedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id())
                 .orElseThrow();

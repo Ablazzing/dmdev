@@ -32,7 +32,7 @@ public class UserRepositoryIT extends IntegrationBase {
                 .password("kkkk")
                 .build();
 
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
         User newUser = userRepository.findById(CREATED_USER_ID.id()).orElseThrow();
         assertThat(newUser).isNotNull();
     }
@@ -56,7 +56,7 @@ public class UserRepositoryIT extends IntegrationBase {
                 .email("test@ya.ru")
                 .role(UserRole.USER)
                 .build();
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
 
         User updatedUser = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         assertThat(updatedUser.getRole()).isEqualTo(UserRole.USER);
@@ -73,7 +73,7 @@ public class UserRepositoryIT extends IntegrationBase {
     public void checkUserFilter() {
         UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
 
-        List<User> list = userRepository.getUsersByFilter(filter, entityManager);
+        List<User> list = userRepository.getUsersByFilter(filter);
 
         assertThat(list).hasSize(2);
     }

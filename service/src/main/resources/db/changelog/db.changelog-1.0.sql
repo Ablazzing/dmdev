@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset molodyko:1
 CREATE TABLE IF NOT EXISTS public.users
 (
     id       SERIAL PRIMARY KEY,

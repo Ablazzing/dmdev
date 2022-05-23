@@ -25,6 +25,8 @@ import static org.molodyko.integration.DababaseEntityId.EXISTED_USER_ID;
 @Transactional
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EntryRepositoryIT extends IntegrationBase {
+    private static final LocalDateTime DATE_MAX = LocalDateTime.of(2030, 1, 1, 0, 0, 0);
+    private static final LocalDateTime DATE_MIN = LocalDateTime.of(2010, 1, 1, 0, 0, 0);
 
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -36,11 +38,11 @@ public class EntryRepositoryIT extends IntegrationBase {
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         Entry entry = Entry.builder()
                 .amount(BigDecimal.valueOf(1000d))
-                .date(LocalDateTime.MAX)
+                .date(DATE_MAX)
                 .operationNumber(1)
                 .category(category)
                 .description("some_text2").user(user).build();
-        entryRepository.save(entry);
+        entryRepository.saveAndFlush(entry);
 
         Entry createdEntry = entryRepository.findById(4).orElseThrow();
         assertThat(createdEntry).isNotNull();
@@ -68,9 +70,9 @@ public class EntryRepositoryIT extends IntegrationBase {
                 .description("some_text3")
                 .operationNumber(4)
                 .amount(BigDecimal.valueOf(1000d))
-                .date(LocalDateTime.MIN)
+                .date(DATE_MIN)
                 .build();
-        entryRepository.save(entry);
+        entryRepository.saveAndFlush(entry);
 
         Entry updatedEntry = entryRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         assertThat(updatedEntry.getOperationNumber()).isEqualTo(4);
@@ -92,7 +94,7 @@ public class EntryRepositoryIT extends IntegrationBase {
                 .dateEnd(LocalDateTime.of(2021, 1, 1, 0, 0, 0))
                 .build();
 
-        List<Entry> entries = entryRepository.getEntriesByFilter(entryFilter, entityManager);
+        List<Entry> entries = entryRepository.getEntriesByFilter(entryFilter);
 
         BigDecimal expectedSum = BigDecimal.valueOf(3000d);
 

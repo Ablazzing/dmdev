@@ -1,9 +1,12 @@
 package org.molodyko.integration;
 
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.persistence.EntityManager;
 import java.io.BufferedReader;
@@ -14,13 +17,25 @@ import java.util.stream.Collectors;
 
 @SpringBootTest
 public abstract class IntegrationBase {
-    private final String sqlCreateTables = readSqlScript("create_tables.sql");
+    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.1");
+
     private final String sqlInsertData = readSqlScript("insert_data.sql");
+    private final String sqlCleanData = readSqlScript("clean_data.sql");
 
     @Autowired
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
-    private final String sqlDropTables = "DROP ALL OBJECTS";
+    @BeforeAll
+    private static void startContainer() {
+        container.start();
+    }
+
+    @DynamicPropertySource
+    private static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", container::getJdbcUrl);
+        registry.add("spring.datasource.password", container::getPassword);
+        registry.add("spring.datasource.username", container::getUsername);
+    }
 
     private static String readSqlScript(String filename) {
         InputStream dataStream = IntegrationBase.class.getClassLoader().getResourceAsStream(filename);
@@ -29,13 +44,8 @@ public abstract class IntegrationBase {
     }
 
     @BeforeEach
-    protected void fillDatabaseTestData() {
-        entityManager.createNativeQuery(sqlCreateTables).executeUpdate();
-        entityManager.createNativeQuery(sqlInsertData).executeUpdate();
-    }
-
-    @AfterEach
     protected void clearDatabase() {
-        entityManager.createNativeQuery(sqlDropTables).executeUpdate();
+        entityManager.createNativeQuery(sqlCleanData).executeUpdate();
+        entityManager.createNativeQuery(sqlInsertData).executeUpdate();
     }
 }

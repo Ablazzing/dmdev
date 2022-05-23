@@ -37,7 +37,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
                 .category(category)
                 .descriptionPattern("some_text2")
                 .build();
-        descrRepository.save(descriptionChanger);
+        descrRepository.saveAndFlush(descriptionChanger);
 
         DescriptionChanger changer = descrRepository.findById(CREATED_DESCRIPTION_CHANGER_ID.id()).orElseThrow();
         assertThat(changer).isNotNull();
@@ -62,7 +62,7 @@ public class DescriptionChangerRepositoryIT extends IntegrationBase {
                 .category(category)
                 .descriptionPattern("new pattern")
                 .id(EXISTED_DESCRIPTION_CHANGER_ID.id()).build();
-        descrRepository.save(changer);
+        descrRepository.saveAndFlush(changer);
 
         DescriptionChanger updatedChanger = descrRepository.findById(EXISTED_DESCRIPTION_CHANGER_ID.id())
                 .orElseThrow();

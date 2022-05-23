@@ -37,7 +37,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
                 .category(category)
                 .user(user)
                 .build();
-        holidayTypeRepository.save(holidayType);
+        holidayTypeRepository.saveAndFlush(holidayType);
 
         HolidayType createdHolidayType = holidayTypeRepository.findById(CREATED_HOLIDAY_TYPE_ID.id()).orElseThrow();
         assertThat(createdHolidayType).isNotNull();
@@ -63,7 +63,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
                 .name("отпуск в горы")
                 .build();
 
-        holidayTypeRepository.save(holidayType);
+        holidayTypeRepository.saveAndFlush(holidayType);
 
         HolidayType holidayTypeGet = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id()).orElseThrow();
         assertThat(holidayTypeGet.getName()).isEqualTo(holidayType.getName());

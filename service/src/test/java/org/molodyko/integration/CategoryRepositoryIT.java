@@ -28,7 +28,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     public void create() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category food = Category.builder().name("food").user(user).build();
-        categoryRepository.save(food);
+        categoryRepository.saveAndFlush(food);
 
         Category createdCategory = categoryRepository.findById(CREATED_CATEGORY_ID.id()).orElseThrow();
         assertThat(createdCategory).isNotNull();
@@ -46,7 +46,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     public void update() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
-        categoryRepository.save(category);
+        categoryRepository.saveAndFlush(category);
 
         Category updatedCategory = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         assertThat(updatedCategory.getName()).isEqualTo("animal");
