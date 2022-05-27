@@ -31,7 +31,6 @@ public class FilterUserRepositoryImpl implements FilterUserRepository {
                 .getPredicates();
 
         criteria.select(user).where(predicate);
-        List<User> users = entityManager.createQuery(criteria).getResultList();
-        return users;
+        return entityManager.createQuery(criteria).getResultList();
     }
 }

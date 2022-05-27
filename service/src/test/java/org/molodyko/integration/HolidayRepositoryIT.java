@@ -33,7 +33,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
     private final HolidayRepository holidayRepository;
 
     @Test
-    public void create() {
+    void create() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id()).orElseThrow();
         Holiday holiday = Holiday.builder()
@@ -49,7 +49,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void read() {
+    void read() {
         Holiday holiday = holidayRepository.findById(EXISTED_HOLIDAY_ID.id()).orElseThrow();
 
         LocalDate expectedStartDate = LocalDate.of(2020, 1, 1);
@@ -62,7 +62,7 @@ public class HolidayRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void update() {
+    void update() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id()).orElseThrow();
         Holiday holiday = Holiday.builder().id(EXISTED_HOLIDAY_ID.id())
@@ -74,12 +74,12 @@ public class HolidayRepositoryIT extends IntegrationBase {
         holidayRepository.saveAndFlush(holiday);
 
         Holiday updatedHoliday = holidayRepository.findById(EXISTED_HOLIDAY_ID.id()).orElseThrow();
-        //TODO
-        //assertThat(updatedHoliday.getStartDate()).isEqualTo(LocalDate.MIN);
+
+        assertThat(updatedHoliday.getStartDate()).isEqualTo(DATE_MIN.toLocalDate());
     }
 
     @Test
-    public void delete() {
+    void delete() {
         holidayRepository.deleteById(EXISTED_HOLIDAY_ID.id());
 
         Optional<Holiday> deletedHoliday = holidayRepository.findById(EXISTED_HOLIDAY_ID.id());
