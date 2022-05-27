@@ -23,11 +23,10 @@ public class EntryFilterRepositoryImpl implements EntryFilterRepository {
                 .add(entryFilter.getDateEnd(), entry.date::before)
                 .andAll();
 
-        List<Entry> entries = new JPAQuery<Entry>(entityManager)
+        return new JPAQuery<Entry>(entityManager)
                 .select(entry)
                 .from(entry)
                 .where(predicate)
                 .fetch();
-        return entries;
     }
 }

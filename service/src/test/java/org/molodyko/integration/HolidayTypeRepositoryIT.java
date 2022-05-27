@@ -29,7 +29,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
     private final HolidayTypeRepository holidayTypeRepository;
 
     @Test
-    public void create() {
+    void create() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         HolidayType holidayType = HolidayType.builder()
@@ -44,7 +44,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void read() {
+    void read() {
         HolidayType holidayType = holidayTypeRepository.findById(EXISTED_HOLIDAY_TYPE_ID.id()).orElseThrow();
 
         assertThat(holidayType.getName()).isEqualTo("отпуск на море");
@@ -53,7 +53,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void update() {
+    void update() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         HolidayType holidayType = HolidayType.builder()
@@ -70,7 +70,7 @@ public class HolidayTypeRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         holidayTypeRepository.deleteById(FOR_DELETE_HOLIDAY_TYPE_ID.id());
 
         Optional<HolidayType> holidayType = holidayTypeRepository.findById(FOR_DELETE_HOLIDAY_TYPE_ID.id());
