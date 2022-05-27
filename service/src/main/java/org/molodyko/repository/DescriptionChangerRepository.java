@@ -1,16 +1,8 @@
 package org.molodyko.repository;
 
-import org.hibernate.SessionFactory;
 import org.molodyko.entity.DescriptionChanger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class DescriptionChangerRepository extends BaseRepository<DescriptionChanger, Integer> {
+public interface DescriptionChangerRepository extends JpaRepository<DescriptionChanger, Integer> {
 
-    @Autowired
-    public DescriptionChangerRepository() {
-        super(DescriptionChanger.class);
-    }
 }

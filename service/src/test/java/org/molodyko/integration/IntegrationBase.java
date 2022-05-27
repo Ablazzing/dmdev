@@ -1,95 +1,41 @@
 package org.molodyko.integration;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.molodyko.Runner;
-import org.molodyko.config.SessionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
 
+import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-@SpringBootTest(classes = {Runner.class, SessionConfig.class})
+@SpringBootTest
 public abstract class IntegrationBase {
-    @Autowired
-    protected SessionFactory sessionFactory;
-
-    private final String sqlCreateTables = readSqlScript("create_tables.sql");
+    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.1");
 
     private final String sqlInsertData = readSqlScript("insert_data.sql");
+    private final String sqlCleanData = readSqlScript("clean_data.sql");
 
-    private String sqlDropTables = "DROP ALL OBJECTS";
+    @Autowired
+    private EntityManager entityManager;
 
-    @BeforeEach
-    protected void fillDatabaseTestData() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-
-            session.createSQLQuery(sqlCreateTables).executeUpdate();
-            session.createSQLQuery(sqlInsertData).executeUpdate();
-
-            session.getTransaction().commit();
-        }
+    @BeforeAll
+    private static void startContainer() {
+        container.start();
     }
 
-    @AfterEach
-    protected void clearDatabase() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-
-            session.createSQLQuery(sqlDropTables).executeUpdate();
-
-            session.getTransaction().commit();
-        }
+    @DynamicPropertySource
+    private static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", container::getJdbcUrl);
+        registry.add("spring.datasource.password", container::getPassword);
+        registry.add("spring.datasource.username", container::getUsername);
     }
-
-    @Test
-    void createWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            create(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void readWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            read(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void updateWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            update(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    @Test
-    void deleteWithTransactional() {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            delete(session);
-            session.getTransaction().commit();
-        }
-    }
-
-    abstract void create(Session session);
-    abstract void update(Session session);
-    abstract void delete(Session session);
-    abstract void read(Session session);
 
     private static String readSqlScript(String filename) {
         InputStream dataStream = IntegrationBase.class.getClassLoader().getResourceAsStream(filename);
@@ -97,4 +43,9 @@ public abstract class IntegrationBase {
         return bufferedReader.lines().collect(Collectors.joining());
     }
 
+    @BeforeEach
+    protected void clearDatabase() {
+        entityManager.createNativeQuery(sqlCleanData).executeUpdate();
+        entityManager.createNativeQuery(sqlInsertData).executeUpdate();
+    }
 }

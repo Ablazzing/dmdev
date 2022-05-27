@@ -1,0 +1,7 @@
+spring:
+  jpa:
+    properties:
+      hiberante:
+        show_sql: true
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
