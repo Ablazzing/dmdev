@@ -12,7 +12,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @SpringBootTest
 @Slf4j
 @SqlConfig(encoding = "UTF-8")
-@Sql(scripts = {"/clean_data.sql", "/insert_data.sql"})
+@Sql({"/clean_data.sql", "/insert_data.sql"})
 public abstract class IntegrationBase {
     private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.1");
 

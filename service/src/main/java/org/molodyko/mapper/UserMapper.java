@@ -1,10 +1,10 @@
 package org.molodyko.mapper;
 
-import lombok.experimental.UtilityClass;
 import org.molodyko.dto.UserDto;
 import org.molodyko.entity.User;
+import org.springframework.stereotype.Service;
 
-@UtilityClass
+@Service
 public class UserMapper {
 
     public User convertUserDtoToEntity(UserDto userDto) {

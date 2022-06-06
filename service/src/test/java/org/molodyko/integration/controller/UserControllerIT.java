@@ -1,13 +1,11 @@
-package org.molodyko.integration;
+package org.molodyko.integration.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.molodyko.dto.UserDto;
-import org.molodyko.entity.User;
-import org.molodyko.mapper.UserMapper;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,9 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 @Transactional
-class UserControllerTest extends IntegrationBase {
+class UserControllerIT extends IntegrationBase {
     private final MockMvc mockMvc;
     private final UserService userService;
 
@@ -50,8 +48,7 @@ class UserControllerTest extends IntegrationBase {
     @Test
     @SneakyThrows
     void updateView() {
-        User user = userService.findById(1).orElseThrow();
-        UserDto userDto = UserMapper.convertEntityToDto(user);
+        UserDto userDto = userService.findById(1).orElseThrow();
 
         mockMvc.perform(get("/users/update_user").param("id", "1"))
                 .andExpect(status().is2xxSuccessful())

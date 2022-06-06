@@ -7,40 +7,59 @@ import org.molodyko.entity.filter.UserFilter;
 import org.molodyko.mapper.UserMapper;
 import org.molodyko.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public Optional<User> findById(Integer id) {
-        return userRepository.findById(id);
+    public Optional<UserDto> findById(Integer id) {
+        return userRepository.findById(id).map(userMapper::convertEntityToDto);
     }
 
-    public void update(UserDto userDto) {
-        User user = UserMapper.convertUserDtoToEntity(userDto);
+    public UserDto update(UserDto userDto) {
+        User user = userMapper.convertUserDtoToEntity(userDto);
         userRepository.saveAndFlush(user);
+        return userMapper.convertEntityToDto(user);
     }
 
-    public void create(UserDto userDto) {
-        User user = UserMapper.convertUserDtoToEntity(userDto);
+    public UserDto create(UserDto userDto) {
+        User user = userMapper.convertUserDtoToEntity(userDto);
         userRepository.saveAndFlush(user);
+        return userMapper.convertEntityToDto(user);
     }
 
-    public void deleteById(Integer id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User with %d is not found for delete".formatted(id)));
-        userRepository.delete(user);
+    public boolean deleteById(Integer id) {
+        return userRepository.findById(id)
+                .map(entity -> {
+                    userRepository.delete(entity);
+                    return true;
+                })
+                .orElse(false);
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::convertEntityToDto)
+                .collect(Collectors.toList());
     }
 
-    public List<User> findByFilter(UserFilter userFilter) {
-        return userRepository.getUsersByFilter(userFilter);
+    public List<UserDto> findByFilter(UserFilter userFilter) {
+        return userRepository.getUsersByFilter(userFilter)
+                .stream()
+                .map(userMapper::convertEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }
