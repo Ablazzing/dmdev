@@ -1,4 +1,4 @@
-package org.molodyko.integration;
+package org.molodyko.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.molodyko.entity.Category;
 import org.molodyko.entity.Entry;
 import org.molodyko.entity.User;
 import org.molodyko.entity.filter.EntryFilter;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.EntryRepository;
 import org.molodyko.repository.UserRepository;

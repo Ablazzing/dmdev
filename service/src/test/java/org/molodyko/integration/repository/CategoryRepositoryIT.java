@@ -1,9 +1,10 @@
-package org.molodyko.integration;
+package org.molodyko.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.User;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

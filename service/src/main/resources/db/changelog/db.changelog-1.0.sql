@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.category
     id      SERIAL PRIMARY KEY,
     name    VARCHAR(50) NOT NULL,
     user_id INTEGER     NOT NULL,
+    unique (name, user_id),
     foreign key (user_id) references public.users (id)
 );
 
