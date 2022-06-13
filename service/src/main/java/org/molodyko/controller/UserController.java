@@ -38,13 +38,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> users(
-                            @RequestParam(required = false) String username,
-                            @RequestParam(required = false) String role) {
-        UserFilter userFilter = UserFilter.builder()
-                .username(username != null && !username.isEmpty() ? username : null)
-                .role(role != null && !role.isEmpty() ? UserRole.valueOf(role) : null)
-                .build();
+    public List<UserDto> users(UserFilter userFilter) {
         return userService.findByFilter(userFilter);
     }
 

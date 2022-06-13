@@ -53,7 +53,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/update")
-    public String updateCategoryView(@PathVariable Integer id, Model model) {
+    public String getUpdateCategoryView(@PathVariable Integer id, Model model) {
         CategoryDto categoryDto = categoryService.findById(id);
         fillDefaultAttributeModel(model);
         model.addAttribute("categoryDto", categoryDto);
@@ -67,7 +67,6 @@ public class CategoryController {
         if (!checkCategoryDto(categoryDto, redirectAttributes)) {
             return "redirect:categories/create";
         }
-
 
         categoryDto.setId(id);
         categoryService.updateCategory(categoryDto);
