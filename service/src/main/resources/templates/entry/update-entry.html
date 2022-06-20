@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-6">
             <h2>Создание операции</h2>
-            <form th:action="'/entries/' + ${entryDtoRq.getId()} + '/update'" method="post" th:object="${entryDtoRq}">
+            <form th:action="@{|/entries/${entryDtoRq.getId()}/update|}" method="post" th:object="${entryDtoRq}">
                 <input class="form-control" type="hidden" th:field="*{id}">
                 <input class="form-control" type="hidden" th:field="*{operationNumber}">
                 <div class="form-group">
