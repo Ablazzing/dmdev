@@ -15,14 +15,23 @@
 <div class="container-fluid">
     <div class="row justify-center">
         <div class="col-3 col-xs-12">
+            <form action="">
+                <h1>Choose language</h1>
+                <select name="lang" onchange="this.form.submit()">
+                    <option></option>
+                    <option value="en">en</option>
+                    <option value="ru">ru</option>
+                </select>
+
+            </form>
             <form class="form-signin" method="post" action="/login">
                 <h2 class="form-signin-heading">Пожалуйста авторизуйтесь</h2>
                 <p>
-                    <label for="username" class="sr-only">Логин пользователя</label>
+                    <label for="username"><span th:text="#{login.username}"></span></label>
                     <input type="text" id="username" name="username" class="form-control" placeholder="Username" required="" autofocus="">
                 </p>
                 <p>
-                    <label for="password" class="sr-only">Пароль</label>
+                    <label for="password"><span th:text="#{login.password}"></span></label>
                     <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
                 </p>
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
