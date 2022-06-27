@@ -1,9 +1,10 @@
-package org.molodyko.integration;
+package org.molodyko.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.User;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     private final CategoryRepository categoryRepository;
 
     @Test
-    public void create() {
+    void create() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category food = Category.builder().name("food").user(user).build();
         categoryRepository.saveAndFlush(food);
@@ -35,7 +36,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void read() {
+    void read() {
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
 
         assertThat(category.getName()).isEqualTo("vacation");
@@ -43,7 +44,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void update() {
+    void update() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = Category.builder().id(EXISTED_CATEGORY_ID.id()).name("animal").user(user).build();
         categoryRepository.saveAndFlush(category);
@@ -53,7 +54,7 @@ public class CategoryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         categoryRepository.deleteById(FOR_DELETE_CATEGORY_ID.id());
 
         Optional<Category> deletedCategory = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id());

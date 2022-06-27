@@ -1,4 +1,19 @@
+server:
+  context-path: /Cardinal
+  session:
+    cookie:
+      http-only: true
+  tomcat:
+    uri-encoding: UTF-8
+  port: 8080
+
 spring:
+  thymeleaf:
+    cache: false
+    mode: HTML5
+    encoding: UTF-8
+  messages:
+    basename: messages
   datasource:
     username:  postgres
     password: admin

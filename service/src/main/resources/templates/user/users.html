@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+<body>
+    <form class="form-inline ml-3 mt-2" th:action="'/users'" >
+    <span class="mr-2">Фильтр</span>
+    <div class="form-group mr-1">
+        <input class="form-control" id="username" name="username" placeholder="username"/>
+    </div>
+        <div class="form-group mr-2">
+            <input class="form-control" id="role" name="role" placeholder="role"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
+    <table class="table table-bordered table-sm text-center">
+        <thead class="thead-dark">
+        <th>Имя пользователя</th>
+        <th>Email</th>
+        <th>Роль</th>
+        <th>Действия</th>
+        </thead>
+        <tbody>
+        <tr th:each="user:${users}">
+            <td th:text="${user.getUsername()}"></td>
+            <td th:text="${user.getEmail()}"></td>
+            <td th:text="${user.getRole()}"></td>
+            <td class="d-flex justify-content-around">
+                <a th:href="'users/update_user?id='+${user.getId()}"><button class="btn btn-primary" >Изменить</button></a>
+                <form th:action="'users/delete/'+${user.getId()}" method="post"><button class="btn btn-danger">Удалить</button> </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</body>
+</html>

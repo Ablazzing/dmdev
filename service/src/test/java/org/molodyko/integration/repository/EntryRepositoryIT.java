@@ -1,4 +1,4 @@
-package org.molodyko.integration;
+package org.molodyko.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.molodyko.entity.Category;
 import org.molodyko.entity.Entry;
 import org.molodyko.entity.User;
 import org.molodyko.entity.filter.EntryFilter;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.EntryRepository;
 import org.molodyko.repository.UserRepository;
@@ -33,7 +34,7 @@ public class EntryRepositoryIT extends IntegrationBase {
     private final EntryRepository entryRepository;
 
     @Test
-    public void create() {
+    void create() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         Entry entry = Entry.builder()
@@ -49,7 +50,7 @@ public class EntryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void read() {
+    void read() {
         Entry entry = entryRepository.findById(EXISTED_ENTRY_ID.id()).orElseThrow();
 
         assertThat(entry.getAmount().compareTo(BigDecimal.valueOf(1000d))).isEqualTo(0);
@@ -61,7 +62,7 @@ public class EntryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void update() {
+    void update() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category category = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
 
@@ -80,7 +81,7 @@ public class EntryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         entryRepository.deleteById(EXISTED_ENTRY_ID.id());
 
         Optional<Entry> deletedEntry = entryRepository.findById(EXISTED_ENTRY_ID.id());
@@ -88,7 +89,7 @@ public class EntryRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void checkEntryFilter() {
+    void checkEntryFilter() {
         EntryFilter entryFilter = EntryFilter.builder()
                 .dateStart(LocalDateTime.of(2019, 1, 1, 0, 0, 0))
                 .dateEnd(LocalDateTime.of(2021, 1, 1, 0, 0, 0))

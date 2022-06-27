@@ -1,10 +1,11 @@
-package org.molodyko.integration;
+package org.molodyko.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.Category;
 import org.molodyko.entity.CategoryRename;
 import org.molodyko.entity.User;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.repository.CategoryRenameRepository;
 import org.molodyko.repository.CategoryRepository;
 import org.molodyko.repository.UserRepository;
@@ -30,7 +31,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
     private final CategoryRenameRepository categoryRenameRepository;
 
     @Test
-    public void create() {
+    void create() {
         Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ID.id()).orElseThrow();
         Category categoryAfter = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id()).orElseThrow();
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
@@ -48,7 +49,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void read() {
+    void read() {
         CategoryRename categoryRename = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id())
                 .orElseThrow();
 
@@ -58,7 +59,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void update() {
+    void update() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
         Category categoryBefore = categoryRepository.findById(EXISTED_CATEGORY_ANOTHER_ID.id()).orElseThrow();
         Category categoryAfter = categoryRepository.findById(FOR_DELETE_CATEGORY_ID.id()).orElseThrow();
@@ -77,7 +78,7 @@ public class CategoryRenameRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         categoryRenameRepository.deleteById(EXISTED_CATEGORY_RENAME_ID.id());
 
         Optional<CategoryRename> deletedRenamer = categoryRenameRepository.findById(EXISTED_CATEGORY_RENAME_ID.id());

@@ -1,10 +1,11 @@
-package org.molodyko.integration;
+package org.molodyko.integration.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.molodyko.entity.User;
 import org.molodyko.entity.UserRole;
 import org.molodyko.entity.filter.UserFilter;
+import org.molodyko.integration.IntegrationBase;
 import org.molodyko.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +25,7 @@ public class UserRepositoryIT extends IntegrationBase {
     private final UserRepository userRepository;
 
     @Test
-    public void create() {
+    void create() {
         User user = User.builder()
                 .username("ablazzing")
                 .email("y288@ay.ru")
@@ -38,7 +39,7 @@ public class UserRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void read() {
+    void read() {
         User user = userRepository.findById(EXISTED_USER_ID.id()).orElseThrow();
 
         assertThat(user.getEmail()).isEqualTo("test@ya.ru");
@@ -48,7 +49,7 @@ public class UserRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void update() {
+    void update() {
         User user = User.builder()
                 .id(EXISTED_USER_ID.id())
                 .username("abl")
@@ -63,14 +64,14 @@ public class UserRepositoryIT extends IntegrationBase {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         userRepository.deleteById(FOR_DELETE_USER_ID.id());
         Optional<User> deletedUser = userRepository.findById(FOR_DELETE_USER_ID.id());
         assertThat(deletedUser).isEmpty();
     }
 
     @Test
-    public void checkUserFilter() {
+    void checkUserFilter() {
         UserFilter filter = UserFilter.builder().username(null).role(UserRole.ADMIN).build();
 
         List<User> list = userRepository.getUsersByFilter(filter);
